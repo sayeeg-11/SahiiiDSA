@@ -24,7 +24,7 @@ Project Review-I | Group No. 08 | Domain: Artificial Intelligence
 | 03 | 26 | Mohit Ajay Jagtap |
 | 04 | 45 | Sarvesh Suresh Patil |
 
-<div>
+</div>
 ---
 
 ## Overview
