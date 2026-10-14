@@ -7,7 +7,7 @@ Features:
   - Progressive 5-tier hint system
   - Full solution reveal in C++ (after 3 hints)
   - Free chat with MentorAgent (RAG-powered)
-  - Code debugger (paste code, get detailed fix)
+  - Code debugger (paste code, get detailed fix
   - Mark problem as Solved / Gave Up (persists session + updates profile)
   - CSV import with incremental sync (checks last 20 solved, appends new ones)
   - Progress dashboard
@@ -796,10 +796,11 @@ def show_problem_workspace():
 
     st.markdown("---")
 
-    tab_hints, tab_chat, tab_debug = st.tabs([
+    tab_hints, tab_chat, tab_debug, tab_editor = st.tabs([
         "💡 Hints & Solution",
         "💬 Chat with Mentor",
         "🐛 Debug My Code",
+        "💻 Code Editor",
     ])
 
     with tab_hints:
@@ -808,7 +809,8 @@ def show_problem_workspace():
         show_free_chat_tab(problem)
     with tab_debug:
         show_debug_tab(problem)
-
+    with tab_editor:
+        show_code_editor_tab(problem)
 
 def show_hints_tab(problem: dict):
     MIN_HINTS_FOR_SOLUTION = 3
@@ -1044,7 +1046,125 @@ def show_free_chat_tab(problem: dict | None):
         agent.chat_history.append({"role": "assistant", "content": response})
         st.session_state.free_chat_messages.append({"role": "assistant", "content": response})
 
+def show_code_editor_tab(problem: dict):
+    """LeetCode-style editor for problems with configured test cases."""
+    from execution.question_bank import QUESTION_TESTS
+    from execution.leetcode_runner import run_question_tests
 
+    st.markdown("### 💻 Code Editor")
+    st.caption(
+        "Write your solution using the expected function signature. "
+        "Run checks the sample tests; Submit checks the configured submission tests."
+    )
+
+    slug = problem.get("slug", "")
+    question = QUESTION_TESTS.get(slug)
+
+    if not question:
+        st.info(
+            "Automated testing is not configured for this problem yet. "
+            "The editor will be enabled when its function signature and "
+            "test cases are added to the question registry."
+        )
+        return
+
+    language_key = f"editor_language_{slug}"
+    language = st.selectbox(
+        "Language",
+        options=["python", "cpp", "c"],
+        format_func=lambda value: {
+            "python": "Python",
+            "cpp": "C++",
+            "c": "C",
+        }[value],
+        key=language_key,
+    )
+
+    code_key = f"editor_code_{slug}_{language}"
+
+    if code_key not in st.session_state:
+        st.session_state[code_key] = question["starter_code"][language]
+
+    source_code = st.text_area(
+        "Your solution",
+        height=350,
+        key=code_key,
+        help="Implement the expected function; don't add your own main() function.",
+    )
+
+    st.warning(
+        "Local development runner only. Submitted code is not sandboxed. "
+        "Run only code you trust, and do not expose this runner to untrusted users."
+    )
+
+    col_run, col_submit = st.columns(2)
+
+    with col_run:
+        run_clicked = st.button(
+            "▶ Run Sample Tests",
+            type="secondary",
+            use_container_width=True,
+            key=f"editor_run_{slug}",
+        )
+
+    with col_submit:
+        submit_clicked = st.button(
+            "✓ Submit Solution",
+            type="primary",
+            use_container_width=True,
+            key=f"editor_submit_{slug}",
+        )
+
+    result_key = f"editor_result_{slug}"
+
+    if run_clicked or submit_clicked:
+        mode = "submit" if submit_clicked else "samples"
+
+        with st.spinner("Running test cases..."):
+            st.session_state[result_key] = run_question_tests(
+                slug=slug,
+                language=language,
+                source_code=source_code,
+                mode=mode,
+            )
+            st.session_state[f"{result_key}_mode"] = mode
+
+    result = st.session_state.get(result_key)
+
+    if not result:
+        return
+
+    mode = st.session_state.get(f"{result_key}_mode", "samples")
+    st.markdown("---")
+    st.markdown(
+        "### " + ("Submission Results" if mode == "submit" else "Sample Test Results")
+    )
+
+    if result["status"] == "unsupported":
+        st.info(result["message"])
+        return
+
+    if result["status"] == "error":
+        st.error(result["message"])
+        return
+
+    if result["status"] == "accepted":
+        st.success(result["message"])
+    else:
+        st.error(result["message"])
+
+    for item in result["results"]:
+        with st.expander(
+            f"Test {item['case']} — "
+            f"{'PASS' if item['passed'] else item['status'].replace('_', ' ').upper()}",
+            expanded=not item["passed"],
+        ):
+            st.write(f"Expected: `{item['expected']}`")
+            st.write(f"Actual: `{item['actual'] or '(no output)'}`")
+            st.write(f"Execution time: {item['duration_ms']} ms")
+
+            if item["stderr"]:
+                st.code(item["stderr"], language="text")
 # ═══════════════════════════════════════════════════════════════
 #  DEBUG TAB
 # ═══════════════════════════════════════════════════════════════
