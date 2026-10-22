@@ -1,220 +1,52 @@
 {
   "profile": {
-    "total_solved": 434,
+    "total_solved": 1,
     "by_difficulty": {
-      "EASY": 181,
-      "MEDIUM": 226,
-      "HARD": 27
+      "EASY": 1,
+      "MEDIUM": 0,
+      "HARD": 0
     },
     "pattern_mastery": {
-      "backtracking": {
-        "solved": 24,
-        "confidence": "HIGH"
-      },
-      "bfs": {
-        "solved": 16,
-        "confidence": "HIGH"
-      },
-      "binary_search": {
-        "solved": 35,
-        "confidence": "HIGH"
-      },
-      "bit_manipulation": {
-        "solved": 34,
-        "confidence": "HIGH"
-      },
-      "design": {
-        "solved": 4,
-        "confidence": "MEDIUM"
-      },
-      "dfs": {
-        "solved": 25,
-        "confidence": "HIGH"
-      },
-      "divide_and_conquer": {
-        "solved": 10,
-        "confidence": "HIGH"
-      },
-      "dp_1d": {
-        "solved": 95,
-        "confidence": "HIGH"
-      },
-      "dp_2d": {
-        "solved": 14,
-        "confidence": "HIGH"
-      },
-      "graph_shortest_path": {
-        "solved": 4,
-        "confidence": "MEDIUM"
-      },
-      "graph_topological": {
-        "solved": 3,
-        "confidence": "MEDIUM"
-      },
-      "greedy": {
-        "solved": 47,
-        "confidence": "HIGH"
-      },
-      "hashing": {
-        "solved": 56,
-        "confidence": "HIGH"
-      },
-      "heap_kth_element": {
-        "solved": 3,
-        "confidence": "MEDIUM"
-      },
-      "intervals": {
-        "solved": 3,
-        "confidence": "MEDIUM"
-      },
-      "linked_list": {
-        "solved": 16,
-        "confidence": "HIGH"
-      },
-      "math": {
-        "solved": 61,
-        "confidence": "HIGH"
-      },
-      "monotonic_stack": {
-        "solved": 2,
-        "confidence": "LOW"
-      },
-      "prefix_sum": {
-        "solved": 17,
-        "confidence": "HIGH"
-      },
-      "recursion": {
-        "solved": 9,
-        "confidence": "HIGH"
-      },
-      "segment_tree": {
-        "solved": 2,
-        "confidence": "LOW"
-      },
-      "simulation": {
-        "solved": 27,
-        "confidence": "HIGH"
-      },
-      "sliding_window": {
-        "solved": 21,
-        "confidence": "HIGH"
-      },
-      "stack_queue": {
-        "solved": 12,
-        "confidence": "HIGH"
-      },
-      "string_matching": {
-        "solved": 48,
-        "confidence": "HIGH"
-      },
-      "trie": {
+      "two_pointers": {
         "solved": 1,
         "confidence": "LOW"
       },
-      "two_pointers": {
-        "solved": 62,
-        "confidence": "HIGH"
+      "bfs": {
+        "solved": 1,
+        "confidence": "LOW"
       },
-      "union_find": {
-        "solved": 4,
-        "confidence": "MEDIUM"
+      "math": {
+        "solved": 1,
+        "confidence": "LOW"
+      },
+      "monotonic_stack": {
+        "solved": 1,
+        "confidence": "LOW"
       }
     },
     "weak_patterns": [
-      "monotonic_stack",
-      "segment_tree",
-      "trie"
-    ],
-    "strong_patterns": [
-      "backtracking",
+      "two_pointers",
       "bfs",
-      "binary_search",
-      "bit_manipulation",
-      "dfs",
-      "divide_and_conquer",
-      "dp_1d",
-      "dp_2d",
-      "greedy",
-      "hashing",
-      "linked_list",
       "math",
-      "prefix_sum",
-      "recursion",
-      "simulation",
-      "sliding_window",
-      "stack_queue",
-      "string_matching",
-      "two_pointers"
+      "monotonic_stack"
     ],
+    "strong_patterns": [],
     "recent_activity": [
       {
-        "problem_id": "roman-to-integer",
-        "title": "Roman to Integer",
+        "problem_id": "most-popular-video-creator",
+        "title": "Most Popular Video Creator",
         "difficulty": "EASY",
         "patterns": [
-          "hashing",
-          "math"
+          "two_pointers",
+          "bfs",
+          "math",
+          "monotonic_stack"
         ],
-        "solved_at": "2026-03-31T21:04:16"
-      },
-      {
-        "problem_id": "is-subsequence",
-        "title": "Is Subsequence",
-        "difficulty": "EASY",
-        "patterns": [
-          "two_pointers"
-        ],
-        "solved_at": "2026-03-31T11:10:16"
-      },
-      {
-        "problem_id": "check-if-strings-can-be-made-equal-with-operations-ii",
-        "title": "Check if Strings Can be Made Equal With Operations II",
-        "difficulty": "MEDIUM",
-        "patterns": [
-          "hashing",
-          "string_matching"
-        ],
-        "solved_at": "2026-03-30T12:40:26"
-      },
-      {
-        "problem_id": "check-if-strings-can-be-made-equal-with-operations-i",
-        "title": "Check if Strings Can be Made Equal With Operations I",
-        "difficulty": "EASY",
-        "patterns": [
-          "string_matching"
-        ],
-        "solved_at": "2026-03-29T13:45:22"
-      },
-      {
-        "problem_id": "minimum-xor-path-in-a-grid",
-        "title": "Minimum XOR Path in a Grid",
-        "difficulty": "MEDIUM",
-        "patterns": [
-          "dp_2d",
-          "greedy"
-        ],
-        "solved_at": "2026-03-28T20:57:47"
-      },
-      {
-        "problem_id": "direction-assignments-with-exactly-k-visible-people",
-        "title": "Direction Assignments with Exactly K Visible People",
-        "difficulty": "MEDIUM",
-        "patterns": [
-          "two_pointers"
-        ],
-        "solved_at": "2026-03-28T20:29:49"
-      },
-      {
-        "problem_id": "minimum-absolute-difference-between-two-values",
-        "title": "Minimum Absolute Difference Between Two Values",
-        "difficulty": "EASY",
-        "patterns": [
-          "binary_search"
-        ],
-        "solved_at": "2026-03-28T20:02:18"
+        "outcome": "SOLVED",
+        "solved_at": "2026-10-22T09:40:32.087808"
       }
     ],
-    "last_updated": "2026-03-31T22:15:22.732193"
+    "last_updated": "2026-10-22T09:40:32.087832"
   },
   "problems": [
     {
@@ -7668,79 +7500,17 @@
   ],
   "session_logs": [
     {
-      "date": "2026-03-29",
-      "problem_id": "3432",
-      "problem_title": "3432",
-      "difficulty": "MEDIUM",
-      "patterns": [],
-      "outcome": "GAVE_UP",
-      "hints_used": 0,
-      "hint_tier_reached": 0
-    },
-    {
-      "date": "2026-03-29",
-      "problem_id": "count-partitions-with-even-sum-difference",
-      "problem_title": "Count Partitions with Even Sum Difference",
+      "date": "2026-10-22",
+      "problem_id": "most-popular-video-creator",
+      "problem_title": "Most Popular Video Creator",
       "difficulty": "EASY",
       "patterns": [
         "two_pointers",
-        "math"
+        "bfs",
+        "math",
+        "monotonic_stack"
       ],
       "outcome": "SOLVED",
-      "hints_used": 3,
-      "hint_tier_reached": 3
-    },
-    {
-      "date": "2026-03-29",
-      "problem_id": "reverse-pairs",
-      "problem_title": "Reverse Pairs",
-      "difficulty": "EASY",
-      "patterns": [
-        "two_pointers",
-        "math"
-      ],
-      "outcome": "GAVE_UP",
-      "hints_used": 1,
-      "hint_tier_reached": 1
-    },
-    {
-      "date": "2026-03-31",
-      "problem_id": "minimum-absolute-difference-between-two-values",
-      "problem_title": "Minimum Absolute Difference Between Two Values",
-      "difficulty": "EASY",
-      "patterns": [
-        "two_pointers",
-        "greedy"
-      ],
-      "outcome": "SOLVED",
-      "hints_used": 0,
-      "hint_tier_reached": 0
-    },
-    {
-      "date": "2026-03-31",
-      "problem_id": "difference-between-ones-and-zeros-in-row-and-column",
-      "problem_title": "Difference Between Ones and Zeros in Row and Column",
-      "difficulty": "EASY",
-      "patterns": [
-        "two_pointers",
-        "math"
-      ],
-      "outcome": "GAVE_UP",
-      "hints_used": 0,
-      "hint_tier_reached": 0
-    },
-    {
-      "date": "2026-03-31",
-      "problem_id": "sliding-window-maximum",
-      "problem_title": "Sliding Window Maximum",
-      "difficulty": "EASY",
-      "patterns": [
-        "two_pointers",
-        "sliding_window",
-        "greedy",
-        "math"
-      ],
-      "outcome": "GAVE_UP",
       "hints_used": 0,
       "hint_tier_reached": 0
     }
