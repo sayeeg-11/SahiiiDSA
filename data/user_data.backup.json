@@ -1,0 +1,18 @@
+
+{
+  "profile": {
+    "total_solved": 0,
+    "by_difficulty": {
+      "EASY": 0,
+      "MEDIUM": 0,
+      "HARD": 0
+    },
+    "pattern_mastery": {},
+    "weak_patterns": [],
+    "strong_patterns": [],
+    "recent_activity": [],
+    "last_updated": null
+  },
+  "problems": [],
+  "session_logs": []
+}
