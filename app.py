@@ -28,10 +28,10 @@ from ingestion.profile_builder import load_profile, UserProfile
 # ═══════════════════════════════════════════════════════════════
 
 st.set_page_config(
-    page_title="DSA Mentor",
+    page_title="SahiiiDSA",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="expanded"
 )
 
 st.markdown("""
@@ -198,7 +198,7 @@ def _show_model_selector():
 
 def show_sidebar():
     with st.sidebar:
-        st.markdown("### 🧠 DSA Mentor")
+        st.markdown("### 🧠 SahiiiDSA")
         st.markdown("---")
 
         _nav_options = ["🎯 Solve Problems", "📊 Dashboard", "📥 Import CSV"]
@@ -771,22 +771,49 @@ def _show_similar_solved(similar: list[dict]):
             col.caption(f"{diff}" + (f"  ·  {', '.join(pats)}" if pats else ""))
 
 
+
+
+
 def show_problem_workspace():
     problem = st.session_state.problem
 
+    # Problem details
     show_problem_card(problem)
 
     similar = _get_similar_solved(problem)
     _show_similar_solved(similar)
 
-    st.markdown("")
-    c1, c2, c3 = st.columns([2, 2, 6])
+    st.divider()
+
+    # Editor and debugger always appear together
+    editor_col, debug_col = st.columns([3, 2], gap="large")
+
+    with editor_col:
+        with st.container(border=True):
+            st.markdown("### 💻 Code Editor")
+            show_code_editor_tab(problem)
+
+    with debug_col:
+        with st.container(border=True):
+            st.markdown("### 🐛 Debug My Code")
+            show_debug_tab(problem)
+
+    st.divider()
+
+    # Session actions
+    c1, c2, _ = st.columns([2, 2, 6])
+
     with c1:
-        if st.button("✅ Mark as Solved", type="primary", use_container_width=True):
+        if st.button(
+            "✅ Mark as Solved",
+            type="primary",
+            use_container_width=True,
+        ):
             _save_current_session("SOLVED")
             st.success("🎉 Saved! Problem marked as solved.")
             _reset_problem()
             st.rerun()
+
     with c2:
         if st.button("🏳️ Gave Up", use_container_width=True):
             _save_current_session("GAVE_UP")
@@ -794,23 +821,18 @@ def show_problem_workspace():
             _reset_problem()
             st.rerun()
 
-    st.markdown("---")
+    st.divider()
 
-    tab_hints, tab_chat, tab_debug, tab_editor = st.tabs([
+    tab_hints, tab_chat = st.tabs([
         "💡 Hints & Solution",
         "💬 Chat with Mentor",
-        "🐛 Debug My Code",
-        "💻 Code Editor",
     ])
 
     with tab_hints:
         show_hints_tab(problem)
+
     with tab_chat:
         show_free_chat_tab(problem)
-    with tab_debug:
-        show_debug_tab(problem)
-    with tab_editor:
-        show_code_editor_tab(problem)
 
 def show_hints_tab(problem: dict):
     MIN_HINTS_FOR_SOLUTION = 3
@@ -1051,10 +1073,9 @@ def show_code_editor_tab(problem: dict):
     from execution.question_bank import QUESTION_TESTS
     from execution.leetcode_runner import run_question_tests
 
-    st.markdown("### 💻 Code Editor")
     st.caption(
-        "Write your solution using the expected function signature. "
-        "Run checks the sample tests; Submit checks the configured submission tests."
+    "Write your solution below. Run checks sample tests; "
+    "Submit checks the configured test suite."
     )
 
     slug = problem.get("slug", "")
@@ -1062,11 +1083,41 @@ def show_code_editor_tab(problem: dict):
 
     if not question:
         st.info(
-            "Automated testing is not configured for this problem yet. "
-            "The editor will be enabled when its function signature and "
-            "test cases are added to the question registry."
-        )
-        return
+        "Automated tests are not configured for this problem yet. "
+        "You can still write your solution below."
+    )
+
+    language_key = f"editor_language_{slug or 'unknown'}"
+    language = st.selectbox(
+        "Language",
+        options=["python", "cpp", "c"],
+        format_func=lambda value: {
+            "python": "Python",
+            "cpp": "C++",
+            "c": "C",
+        }[value],
+        key=language_key,
+    )
+
+    code_key = f"editor_code_{slug or 'unknown'}_{language}"
+
+    starter_code = {
+        "python": "# Write your solution here\n",
+        "cpp": "#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    // Write your solution here\n};\n",
+        "c": "#include <stdio.h>\n\nint main(void) {\n    // Write your solution here\n    return 0;\n}\n",
+    }
+
+    if code_key not in st.session_state:
+        st.session_state[code_key] = starter_code[language]
+
+    st.text_area(
+        "Your solution",
+        height=350,
+        key=code_key,
+        help="Write your solution here. Automated tests may not be available for this problem.",
+    )
+    st.caption("Automated test execution is unavailable for this problem.")
+    return
 
     language_key = f"editor_language_{slug}"
     language = st.selectbox(
@@ -1173,7 +1224,13 @@ def show_debug_tab(problem: dict):
     st.markdown("### 🐛 Debug Your Code")
     st.markdown("Paste your code below. The mentor will find **all errors**, explain them, and show the corrected version.")
 
-    lang = st.selectbox("Language", ["c++", "python", "java", "javascript"], index=0)
+    slug = (problem or {}).get("slug", "general")
+    lang = st.selectbox(
+    "Language",
+    ["c++", "python", "java", "javascript"],
+    index=0,
+    key=f"debug_language_{slug}",
+)
 
     cpp_placeholder = (
         "// Paste your C++ code here...\n"
@@ -1186,14 +1243,25 @@ def show_debug_tab(problem: dict):
     )
     placeholder = cpp_placeholder if lang == "c++" else f"// Paste your {lang} code here..."
 
-    code  = st.text_area("Your Code", height=300, placeholder=placeholder, key="debug_code_input")
-    user_q = st.text_input(
-        "What's wrong? (optional)",
-        placeholder="e.g. Wrong output on [1,2,3] or I get a segfault",
-        key="debug_question",
-    )
+    code = st.text_area(
+    "Your Code",
+    height=300,
+    placeholder=placeholder,
+    key=f"debug_code_input_{slug}",
+)
 
-    if st.button("🔍 Analyze & Fix My Code", type="primary", use_container_width=True):
+    user_q = st.text_input(
+    "What's wrong? (optional)",
+    placeholder="e.g. Wrong output on [1,2,3] or I get a segfault",
+    key=f"debug_question_{slug}",
+)
+
+    if st.button(
+    "🔍 Analyze & Fix My Code",
+    type="primary",
+    use_container_width=True,
+    key=f"debug_analyze_{slug}",
+):
         if not code.strip():
             st.warning("Please paste your code first.")
         else:
@@ -1225,17 +1293,66 @@ def show_debug_tab(problem: dict):
 #  SOLVE PAGE (top-level)
 # ═══════════════════════════════════════════════════════════════
 
+
 def show_solve_page():
+    st.title("🧠 SahiiiDSA")
+    st.caption("Learn. Think. Solve.")
+
+    # Keep problem search accessible at all times
+    with st.expander("🔍 Find or Choose a Problem", expanded=st.session_state.problem is None):
+        show_problem_search()
+
+    st.markdown("---")
+
     if st.session_state.problem is not None:
         show_problem_workspace()
-        return
+    else:
+        st.subheader("💻 Coding Workspace")
+        st.info("Search for a problem or choose a practice pattern above to get started.")
 
-    tab_find, tab_chat = st.tabs(["🔍 Find a Problem", "💬 Chat with Mentor"])
-    with tab_find:
-        show_problem_search()
-    with tab_chat:
-        show_free_chat_tab(problem=None)
+        editor_col, debug_col = st.columns([3, 2], gap="large")
 
+        with editor_col:
+            st.markdown("### 💻 Code Editor")
+            st.selectbox(
+                "Language",
+                ["Python", "C++", "C"],
+                key="empty_workspace_language",
+                disabled=True,
+            )
+            st.text_area(
+                "Your solution",
+                value="Select a problem to load its starter code...",
+                height=350,
+                disabled=True,
+                key="empty_workspace_editor",
+            )
+
+        with debug_col:
+            st.markdown("### 🐛 Debug My Code")
+            st.selectbox(
+                "Language",
+                ["C++", "Python", "Java", "JavaScript"],
+                key="empty_debug_language",
+                disabled=True,
+            )
+            st.text_area(
+                "Your code",
+                value="Select a problem to start debugging...",
+                height=300,
+                disabled=True,
+                key="empty_debug_editor",
+            )
+            st.button(
+                "🔍 Analyze & Fix My Code",
+                disabled=True,
+                use_container_width=True,
+                key="empty_debug_button",
+            )
+
+        st.markdown("---")
+        with st.expander("💬 Chat with Mentor"):
+            show_free_chat_tab(problem=None)
 
 # ═══════════════════════════════════════════════════════════════
 #  DASHBOARD
@@ -1244,104 +1361,227 @@ def show_solve_page():
 def show_dashboard_page():
     import plotly.express as px
 
-    st.title("📊 Your Progress Dashboard")
     profile = load_profile()
 
-    if not profile or profile.total_solved == 0:
-        st.info("No data yet. Go to **Import CSV** to import your solved problems, or solve problems here.")
+    st.title("SahiiiDSA")
+    st.caption("LEARN. THINK. SOLVE.")
+    st.subheader("Learning Overview")
+    st.write("Track your progress, understand your strengths, and find what to practise next.")
+
+    if not profile:
+        st.info("Your learning dashboard is ready. Solve a problem to start tracking your progress.")
         return
 
+    total = profile.total_solved
+    easy = profile.by_difficulty.get("EASY", 0)
+    medium = profile.by_difficulty.get("MEDIUM", 0)
+    hard = profile.by_difficulty.get("HARD", 0)
+
+    # Overview metrics
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Total Solved", profile.total_solved)
-    c2.metric("Easy",   profile.by_difficulty.get("EASY", 0))
-    c3.metric("Medium", profile.by_difficulty.get("MEDIUM", 0))
-    c4.metric("Hard",   profile.by_difficulty.get("HARD", 0))
-    st.markdown("---")
+    c1.metric("Problems Solved", total)
+    c2.metric("Easy", easy)
+    c3.metric("Medium", medium)
+    c4.metric("Hard", hard)
 
-    col_pie, col_bar = st.columns(2)
+    st.divider()
 
-    with col_pie:
-        st.subheader("Difficulty Distribution")
-        fig = px.pie(
-            values=[
-                profile.by_difficulty.get("EASY", 0),
-                profile.by_difficulty.get("MEDIUM", 0),
-                profile.by_difficulty.get("HARD", 0),
-            ],
-            names=["Easy", "Medium", "Hard"],
-            color_discrete_sequence=["#a6e3a1", "#f9e2af", "#f38ba8"],
-        )
-        fig.update_traces(textposition="inside", textinfo="percent+label")
-        st.plotly_chart(fig, width="stretch")
+    # Difficulty distribution and pattern mastery
+    col_left, col_right = st.columns(2)
 
-    with col_bar:
-        st.subheader("Top 10 Patterns")
-        mastery_data = []
-        for pat, data in profile.pattern_mastery.items():
-            solved = data.get("solved", 0) if isinstance(data, dict) else data.solved
-            conf   = data.get("confidence", "LOW") if isinstance(data, dict) else data.confidence
-            mastery_data.append({
-                "Pattern": pat.replace("_", " ").title(),
-                "Solved":  solved,
-                "Level":   conf,
-            })
+    with col_left:
+        st.subheader("Difficulty Breakdown")
+
+        difficulty_data = pd.DataFrame({
+            "Difficulty": ["Easy", "Medium", "Hard"],
+            "Solved": [easy, medium, hard],
+        })
+
+        if total > 0:
+            fig = px.pie(
+                difficulty_data,
+                names="Difficulty",
+                values="Solved",
+                hole=0.58,
+                color="Difficulty",
+                color_discrete_map={
+                    "Easy": "#8BC9A5",
+                    "Medium": "#F2C879",
+                    "Hard": "#E88D94",
+                },
+            )
+            fig.update_traces(
+                textposition="inside",
+                textinfo="percent+label",
+            )
+            fig.update_layout(
+                showlegend=False,
+                margin=dict(t=20, b=20, l=10, r=10),
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Your difficulty breakdown will appear here.")
+
+    mastery_data = []
+
+    for pattern, data in profile.pattern_mastery.items():
+        if isinstance(data, dict):
+            solved = data.get("solved", 0)
+            confidence = data.get("confidence", "LOW")
+        else:
+            solved = getattr(data, "solved", 0)
+            confidence = getattr(data, "confidence", "LOW")
+
+        mastery_data.append({
+            "Pattern": pattern.replace("_", " ").title(),
+            "Solved": solved,
+            "Confidence": confidence,
+        })
+
+    with col_right:
+        st.subheader("Pattern Mastery")
+
         if mastery_data:
-            df = pd.DataFrame(mastery_data).sort_values("Solved", ascending=False).head(10)
-            color_map = {"LOW": "#f38ba8", "MEDIUM": "#f9e2af", "HIGH": "#a6e3a1"}
-            fig2 = px.bar(df, x="Solved", y="Pattern", orientation="h",
-                          color="Level", color_discrete_map=color_map)
-            fig2.update_layout(yaxis={"categoryorder": "total ascending"})
-            st.plotly_chart(fig2, width="stretch")
+            mastery_df = (
+                pd.DataFrame(mastery_data)
+                .sort_values("Solved", ascending=False)
+                .head(8)
+            )
 
-    st.markdown("---")
-    sc, wc = st.columns(2)
-    with sc:
-        st.subheader("✅ Strong Patterns")
-        for p in profile.strong_patterns:
-            st.success(p.replace("_", " ").title())
-        if not profile.strong_patterns:
-            st.info("Keep solving to build strengths!")
-    with wc:
-        st.subheader("⚠️ Needs Practice")
-        for p in profile.weak_patterns:
-            if st.button(f"🏋️ {p.replace('_',' ').title()}", key=f"dash_weak_{p}", use_container_width=True):
-                prob = _get_pattern_problem(p)
-                if prob:
-                    _reset_problem()
-                    st.session_state.problem      = prob
-                    st.session_state.current_page = "solve"
-                    st.rerun()
-        if not profile.weak_patterns:
-            st.success("No weak areas identified!")
+            fig = px.bar(
+                mastery_df,
+                x="Solved",
+                y="Pattern",
+                orientation="h",
+                color="Confidence",
+                color_discrete_map={
+                    "LOW": "#E88D94",
+                    "MEDIUM": "#F2C879",
+                    "HIGH": "#8BC9A5",
+                },
+            )
+            fig.update_layout(
+                yaxis={"categoryorder": "total ascending"},
+                margin=dict(t=20, b=20, l=10, r=10),
+                legend_title_text="Confidence",
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Solve problems to start building your pattern mastery.")
+
+    st.divider()
+
+    # Strengths and areas to practise
+    strong_col, weak_col = st.columns(2)
+
+    with strong_col:
+        st.subheader("Your Strengths")
+
+        strong_patterns = profile.strong_patterns or []
+
+        if strong_patterns:
+            for pattern in strong_patterns:
+                st.success(pattern.replace("_", " ").title())
+        else:
+            st.caption("Your strengths will appear as you solve more problems.")
+
+    with weak_col:
+        st.subheader("Areas to Practise")
+
+        weak_patterns = profile.weak_patterns or []
+
+        if weak_patterns:
+            for pattern in weak_patterns:
+                label = pattern.replace("_", " ").title()
+
+                if st.button(
+                    f"Practise {label} →",
+                    key=f"dash_weak_{pattern}",
+                    use_container_width=True,
+                ):
+                    problem = _get_pattern_problem(pattern)
+
+                    if problem:
+                        _reset_problem()
+                        st.session_state.problem = problem
+                        st.session_state.current_page = "solve"
+                        st.rerun()
+                    else:
+                        st.warning(
+                            f"No practice problem found for {label} yet."
+                        )
+        else:
+            st.caption("No practice areas identified yet. Keep solving!")
 
     if mastery_data:
-        st.markdown("---")
-        st.subheader("Pattern Mastery Table")
-        df_full = pd.DataFrame(mastery_data).sort_values("Solved", ascending=False)
-        st.dataframe(df_full, use_container_width=True, hide_index=True)
+        with st.expander("View All Pattern Statistics"):
+            full_df = (
+                pd.DataFrame(mastery_data)
+                .sort_values("Solved", ascending=False)
+            )
+            st.dataframe(
+                full_df,
+                use_container_width=True,
+                hide_index=True,
+            )
 
-    st.markdown("---")
-    st.subheader("🕒 Recent Activity")
-    recent = profile.recent_activity
+    st.divider()
+
+    # Recent activity
+    st.subheader("Recent Activity")
+
+    recent = profile.recent_activity or []
+
     if recent:
-        recent_df = pd.DataFrame(recent[:20])
-        cols_to_show = [c for c in ["solved_at", "title", "difficulty", "patterns", "outcome"] if c in recent_df.columns]
-        st.dataframe(recent_df[cols_to_show], use_container_width=True, hide_index=True)
-    else:
-        st.info("No recent activity yet.")
+        recent_df = pd.DataFrame(recent[:10])
 
-    st.markdown("---")
-    st.subheader("📝 Session Logs")
-    if USER_DATA_PATH.exists():
-        with open(USER_DATA_PATH, "r", encoding="utf-8") as f:
-            user_data = json.load(f)
-        logs = user_data.get("session_logs", [])
-        if logs:
-            st.dataframe(pd.DataFrame(logs[-20:][::-1]), use_container_width=True, hide_index=True)
+        display_cols = [
+            column
+            for column in [
+                "solved_at",
+                "title",
+                "difficulty",
+                "patterns",
+                "outcome",
+            ]
+            if column in recent_df.columns
+        ]
+
+        if display_cols:
+            st.dataframe(
+                recent_df[display_cols],
+                use_container_width=True,
+                hide_index=True,
+            )
         else:
-            st.info("No sessions logged yet. Solve problems and mark them done to see logs here.")
+            st.caption("Activity exists, but no displayable fields were found.")
+    else:
+        st.info(
+            "No recent activity yet. Solve a problem and mark it as completed "
+            "to see your learning history here."
+        )
 
+    # Session logs
+    with st.expander("Session History"):
+        if USER_DATA_PATH.exists():
+            try:
+                with open(USER_DATA_PATH, "r", encoding="utf-8") as file:
+                    user_data = json.load(file)
 
+                logs = user_data.get("session_logs", [])
+
+                if logs:
+                    st.dataframe(
+                        pd.DataFrame(logs[-20:][::-1]),
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+                else:
+                    st.caption("No sessions recorded yet.")
+            except (json.JSONDecodeError, OSError) as error:
+                st.warning(f"Could not load session history: {error}")
+        else:
+            st.caption("Session history will appear here when available.")
 # ═══════════════════════════════════════════════════════════════
 #  IMPORT / SYNC PAGE
 # ═══════════════════════════════════════════════════════════════
