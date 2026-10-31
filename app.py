@@ -171,27 +171,64 @@ def _show_model_selector():
 
     st.markdown("#### 🤖 AI Model")
 
+    providers = list_available_providers()
+    provider_options = {p["label"]: p for p in providers}
+
     if "llm_provider" not in st.session_state:
         st.session_state.llm_provider = "ollama"
+
     if "llm_model" not in st.session_state:
         st.session_state.llm_model = OLLAMA_MODEL
 
-    models = list_available_providers()[0]["models"]
-    if st.session_state.llm_model not in models:
-        st.session_state.llm_model = OLLAMA_MODEL
+    current_provider = st.session_state.llm_provider
+    if current_provider not in [p["id"] for p in providers]:
+        current_provider = "ollama"
 
-    prev_model = st.session_state.llm_model
+    current_provider_data = next(
+        p for p in providers if p["id"] == current_provider
+    )
+
+    provider_labels = list(provider_options.keys())
+    current_label = current_provider_data["label"]
+
+    selected_label = st.selectbox(
+        "Provider",
+        provider_labels,
+        index=provider_labels.index(current_label),
+        key="llm_provider_select",
+    )
+
+    selected_provider = provider_options[selected_label]["id"]
+    provider_changed = selected_provider != st.session_state.llm_provider
+    st.session_state.llm_provider = selected_provider
+
+    selected_provider_data = provider_options[selected_label]
+    models = selected_provider_data["models"]
+
+    if provider_changed or st.session_state.llm_model not in models:
+        st.session_state.llm_model = selected_provider_data["model"]
+
+    previous_model = st.session_state.llm_model
+
     st.session_state.llm_model = st.selectbox(
-        "Ollama Model", models,
+        "Model",
+        models,
         index=models.index(st.session_state.llm_model),
         key="llm_model_select",
     )
-    st.caption(f"Local Ollama — make sure `ollama serve` is running.")
 
-    if prev_model != st.session_state.llm_model:
+    if selected_provider == "ollama":
+        st.caption("Local Ollama — make sure `ollama serve` is running.")
+    else:
+        st.caption(
+            "Google Gemini — configure GOOGLE_API_KEY in Streamlit Secrets."
+        )
+
+    if (
+        provider_changed
+        or previous_model != st.session_state.llm_model
+    ):
         st.session_state.agent = None
-
-
 # ═══════════════════════════════════════════════════════════════
 #  SIDEBAR
 # ═══════════════════════════════════════════════════════════════

@@ -1,22 +1,42 @@
-"""
-LLM Utilities — Ollama only.
 
-invoke_llm()         — send a plain text prompt, get text back
-invoke_llm_messages()— send LangChain message list, get text back
-stream_llm()         — generator that streams tokens (plain prompt)
-stream_llm_messages()— generator that streams tokens (message list)
-"""
+"""LLM utilities for local Ollama and hosted Google Gemini."""
+
+import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from config import OLLAMA_BASE_URL, OLLAMA_MODEL
 
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
-# ── Ollama constructor ────────────────────────────────────────────
 
-def _make_ollama(temperature: float = 0.3, model: str = None, streaming: bool = False):
+def _get_provider(provider=None):
+    return (provider or "ollama").strip().lower()
+
+
+def _get_google_api_key():
+    key = os.getenv("GOOGLE_API_KEY")
+
+    if key:
+        return key
+
+    # Streamlit Community Cloud Secrets fallback.
+    try:
+        import streamlit as st
+        return st.secrets.get("GOOGLE_API_KEY", "")
+    except Exception:
+        return ""
+
+
+def _make_ollama(
+    temperature: float = 0.3,
+    model: str = None,
+    streaming: bool = False,
+):
     from langchain_ollama import ChatOllama
+
     return ChatOllama(
         base_url=OLLAMA_BASE_URL,
         model=model or OLLAMA_MODEL,
@@ -24,95 +44,196 @@ def _make_ollama(temperature: float = 0.3, model: str = None, streaming: bool = 
     )
 
 
-# ── Public API ────────────────────────────────────────────────────
+def _make_gemini(
+    temperature: float = 0.3,
+    model: str = None,
+    streaming: bool = False,
+):
+    from langchain_google_genai import ChatGoogleGenerativeAI
 
-def get_llm(temperature: float = 0.3, streaming: bool = False,
-            provider: str = None, model: str = None):
-    """Return a LangChain Ollama chat model."""
-    m = model or OLLAMA_MODEL
-    print(f"[LLM] Provider: Ollama | Model: {m} | temp={temperature}")
-    return _make_ollama(temperature, model=m, streaming=streaming)
+    api_key = _get_google_api_key()
+    if not api_key:
+        raise RuntimeError(
+            "GOOGLE_API_KEY is missing. Add it to your local .env "
+            "or Streamlit Community Cloud Secrets."
+        )
+
+    return ChatGoogleGenerativeAI(
+        model=model or GEMINI_MODEL,
+        google_api_key=api_key,
+        temperature=temperature,
+    )
+
+
+def get_llm(
+    temperature: float = 0.3,
+    streaming: bool = False,
+    provider: str = None,
+    model: str = None,
+):
+    selected = _get_provider(provider)
+
+    if selected == "gemini":
+        selected_model = model or GEMINI_MODEL
+        print(f"[LLM] Provider: Gemini | Model: {selected_model}")
+        return _make_gemini(temperature, selected_model, streaming)
+
+    if selected == "ollama":
+        selected_model = model or OLLAMA_MODEL
+        print(f"[LLM] Provider: Ollama | Model: {selected_model}")
+        return _make_ollama(temperature, selected_model, streaming)
+
+    raise ValueError(f"Unsupported LLM provider: {selected}")
 
 
 def get_llm_name(provider: str = None, model: str = None) -> str:
+    selected = _get_provider(provider)
+
+    if selected == "gemini":
+        return f"Gemini ({model or GEMINI_MODEL})"
+
     return f"Ollama ({model or OLLAMA_MODEL})"
 
 
 def list_available_providers() -> list[dict]:
     return [
         {
-            "id":     "ollama",
-            "label":  "Ollama (local)",
-            "model":  OLLAMA_MODEL,
+            "id": "ollama",
+            "label": "Ollama (local)",
+            "model": OLLAMA_MODEL,
             "active": True,
-            "models": ["llama3.2", "llama3.1", "mistral", "codellama", "deepseek-coder"],
+            "models": [
+                "llama3.2",
+                "llama3.1",
+                "mistral",
+                "codellama",
+                "deepseek-coder",
+            ],
+        },
+        {
+            "id": "gemini",
+            "label": "Google Gemini (cloud)",
+            "model": GEMINI_MODEL,
+            "active": True,
+            "models": [GEMINI_MODEL],
         },
     ]
 
 
-def invoke_llm(prompt: str, temperature: float = 0.3,
-               provider: str = None, model: str = None) -> str:
-    """Send a plain text prompt and return the response."""
+def _response_text(response) -> str:
+    content = getattr(response, "content", response)
+
+    if isinstance(content, str):
+        return content.strip()
+
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+            elif isinstance(item, dict) and item.get("text"):
+                parts.append(item["text"])
+        return "".join(parts).strip()
+
+    return str(content).strip()
+
+
+def invoke_llm(
+    prompt: str,
+    temperature: float = 0.3,
+    provider: str = None,
+    model: str = None,
+) -> str:
+    selected = _get_provider(provider)
+
     try:
-        print(f"[LLM] >> invoke [ollama] prompt_len={len(prompt)} chars", flush=True)
-        llm      = _make_ollama(temperature, model=model)
-        response = llm.invoke(prompt)
-        text     = response.content.strip()
-        print(f"[LLM] ok response [ollama] {len(text)} chars", flush=True)
-        return text
+        llm = get_llm(temperature, provider=selected, model=model)
+        return _response_text(llm.invoke(prompt))
     except Exception as e:
         raise RuntimeError(
-            f"Ollama request failed: {e}\n"
-            "Make sure Ollama is running: ollama serve"
+            f"{selected.capitalize()} request failed: {e}"
         ) from e
 
 
-def invoke_llm_messages(messages: list, temperature: float = 0.3,
-                        provider: str = None, model: str = None) -> str:
-    """Send a LangChain message list and return the response."""
+def invoke_llm_messages(
+    messages: list,
+    temperature: float = 0.3,
+    provider: str = None,
+    model: str = None,
+) -> str:
+    selected = _get_provider(provider)
+
     try:
-        print(f"[LLM] >> invoke_messages [ollama] msgs={len(messages)}", flush=True)
-        llm      = _make_ollama(temperature, model=model)
-        response = llm.invoke(messages)
-        text     = response.content.strip()
-        print(f"[LLM] ok response [ollama] {len(text)} chars", flush=True)
-        return text
+        llm = get_llm(temperature, provider=selected, model=model)
+        return _response_text(llm.invoke(messages))
     except Exception as e:
         raise RuntimeError(
-            f"Ollama request failed: {e}\n"
-            "Make sure Ollama is running: ollama serve"
+            f"{selected.capitalize()} request failed: {e}"
         ) from e
 
 
-def stream_llm(prompt: str, temperature: float = 0.3,
-               provider: str = None, model: str = None):
-    """Generator that streams response tokens (plain text prompt)."""
+def _stream_content(chunk):
+    content = getattr(chunk, "content", chunk) or ""
+
+    if isinstance(content, str):
+        return content
+
+    if isinstance(content, list):
+        return "".join(
+            item if isinstance(item, str)
+            else item.get("text", "") if isinstance(item, dict)
+            else ""
+            for item in content
+        )
+
+    return str(content)
+
+
+def stream_llm(
+    prompt: str,
+    temperature: float = 0.3,
+    provider: str = None,
+    model: str = None,
+):
+    selected = _get_provider(provider)
+
     try:
-        print(f"[LLM] >> stream [ollama]", flush=True)
-        llm = _make_ollama(temperature, model=model, streaming=True)
+        llm = get_llm(
+            temperature,
+            streaming=True,
+            provider=selected,
+            model=model,
+        )
         for chunk in llm.stream(prompt):
-            content = getattr(chunk, "content", chunk) or ""
+            content = _stream_content(chunk)
             if content:
                 yield content
     except Exception as e:
         raise RuntimeError(
-            f"Ollama stream failed: {e}\n"
-            "Make sure Ollama is running: ollama serve"
+            f"{selected.capitalize()} stream failed: {e}"
         ) from e
 
 
-def stream_llm_messages(messages: list, temperature: float = 0.3,
-                        provider: str = None, model: str = None):
-    """Generator that streams response tokens (LangChain message list)."""
+def stream_llm_messages(
+    messages: list,
+    temperature: float = 0.3,
+    provider: str = None,
+    model: str = None,
+):
+    selected = _get_provider(provider)
+
     try:
-        print(f"[LLM] >> stream_messages [ollama] msgs={len(messages)}", flush=True)
-        llm = _make_ollama(temperature, model=model, streaming=True)
+        llm = get_llm(
+            temperature,
+            streaming=True,
+            provider=selected,
+            model=model,
+        )
         for chunk in llm.stream(messages):
-            content = getattr(chunk, "content", chunk) or ""
+            content = _stream_content(chunk)
             if content:
                 yield content
     except Exception as e:
         raise RuntimeError(
-            f"Ollama stream failed: {e}\n"
-            "Make sure Ollama is running: ollama serve"
+            f"{selected.capitalize()} stream failed: {e}"
         ) from e
