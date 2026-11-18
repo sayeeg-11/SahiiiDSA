@@ -105,7 +105,7 @@ class LeetCodeClient:
 
     # ── Problem description lookup ────────────────────────────────
 
-    def get_problem_description(self, slug: str) -> Optional[Dict[str, Any]]:
+    def get_problem_description(self, slug: str)    -> Optional[Dict[str, Any]]:
         # Return a cached entry immediately unless it contains a Premium placeholder.
         offline = _lookup_offline(slug)
         offline_description = str((offline or {}).get("description", ""))
@@ -182,39 +182,55 @@ class LeetCodeClient:
             print(f"  Warning: Could not fetch description for '{slug}': {e}")
             return offline
 
-    def get_problem_by_number(self, number: int) -> Optional[Dict[str, Any]]:
-        """Look up a problem by its frontend question number (e.g. 1 → two-sum)."""
+    def get_problem_execution_metadata(self, slug: str) -> Optional[Dict[str, Any]]:
+        """Fetch execution metadata and starter code from LeetCode."""
+
         query = """
-        query problemsetQuestionList($skip: Int, $limit: Int, $filters: QuestionListFilterInput) {
-            problemsetQuestionList: questionList(
-                categorySlug: ""
-                limit: $limit
-                skip: $skip
-                filters: $filters
-            ) {
-                questions: data {
-                    frontendQuestionId: questionFrontendId
-                    titleSlug
-                    title
-                    difficulty
+        query questionDetail($titleSlug: String!) {
+            question(titleSlug: $titleSlug) {
+                title
+                titleSlug
+                metaData
+                exampleTestcases
+                codeSnippets {
+                    lang
+                    langSlug
+                    code
                 }
             }
         }
         """
-        skip = max(0, number - 3)
+
         try:
-            result    = self._graphql_request(query, {"skip": skip, "limit": 10, "filters": {}})
-            questions = result.get("data", {}).get("problemsetQuestionList", {}).get("questions", [])
-            for q in questions:
-                if str(q.get("frontendQuestionId", "")) == str(number):
-                    desc = self.get_problem_description(q["titleSlug"])
-                    if desc and desc.get("number") in ("?", None, ""):
-                        desc = dict(desc)
-                        desc["number"] = str(number)
-                    return desc
-        except Exception:
-            pass
-        return None
+            result = self._graphql_request(
+                query,
+                {"titleSlug": slug}
+            )
+
+            question = result.get("data", {}).get("question")
+
+            if not question:
+                return None
+
+            metadata = question.get("metaData")
+
+            if isinstance(metadata, str):
+                metadata = json.loads(metadata) if metadata else {}
+
+            return {
+                "title": question.get("title"),
+                "slug": question.get("titleSlug", slug),
+                "metadata": metadata or {},
+                "examples": question.get("exampleTestcases", ""),
+                "code_snippets": question.get("codeSnippets") or [],
+                "source": "leetcode",
+            }
+
+        except Exception as error:
+            print(f"Warning: Could not fetch execution metadata for '{slug}': {error}")
+            return None
+
+
 
     def search_problem_by_name(self, name: str) -> Optional[Dict[str, Any]]:
         """

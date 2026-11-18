@@ -1,6 +1,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from backend.routes.execution_routes import router as execution_router
 from backend.routes.question_routes import router as question_router
 
 
@@ -20,6 +21,7 @@ app.add_middleware(
 )
 
 app.include_router(question_router)
+app.include_router(execution_router)
 
 
 @app.get("/")
