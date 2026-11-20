@@ -1,0 +1,1006 @@
+problem_id,problem_title,difficulty,hint_tier,hint_type,generated_hint,response_time_seconds,provider,model,temperature
+1,Two Sum,Easy,1,Pattern Nudge,"Here's a TIER 1 hint:
+
+This problem is about finding a pair of elements in an array that add up to a given target, and it's related to the concept of ""complementary pairs"" in arrays.",18.894,ollama,llama3.2,0.3
+1,Two Sum,Easy,2,Approach Direction,"Here's a TIER 2 hint:
+
+The HIGH-LEVEL approach for this problem is to use a data structure that allows for efficient lookups and deletions. You'll want to use a hash table (like a dictionary or set) to store the numbers you've seen so far and their indices. This is because you'll need to quickly check if a number has been seen before and, if so, what its index was.
+
+What if you were to start with the smallest number in the array and check if its complement (the number that would add up to the target) has been seen before? How would you handle the case where the complement is not in the hash table?",19.626,ollama,llama3.2,0.3
+1,Two Sum,Easy,3,Detailed Strategy,"Here's a TIER 3 hint for the Two Sum problem:
+
+**Step-by-Step Approach:**
+
+1. **Create a hash table**: Initialize an empty hash table (or dictionary in Python) to store the numbers we've seen so far and their indices.
+2. **Iterate through the array**: Iterate through the input array `nums` and for each number, check if its complement (the number that would add up to the target) is already in the hash table.
+3. **Check for complement**: If the complement is in the hash table, return the current index and the index of the complement. This is because we've found two numbers that add up to the target.
+4. **Add current number to hash table**: If the complement is not in the hash table, add the current number and its index to the hash table.
+5. **Repeat steps 2-4**: Continue iterating through the array and checking for the complement until we find a pair that adds up to the target.
+
+**Pseudocode:**
+```
+function twoSum(nums, target):
+  hashTable = {}
+  for i = 0 to length(nums) - 1:
+    complement = target - nums[i]
+    if complement in hashTable:
+      return [hashTable[complement], i]
+    hashTable[nums[i]] = i
+  return None
+```
+**Key Insight or Trick:**
+
+The key insight here is to use a hash table to store the numbers we've seen so far and their indices. This allows us to check if the complement of a number is in the hash table in constant time, making the algorithm more efficient.
+
+**Time and Space Complexity:**
+
+The time complexity of this algorithm is O(n), where n is the length of the input array. This is because we're iterating through the array once and checking for the complement in the hash table.
+
+The space complexity is also O(n), as we're storing all the numbers in the hash table.
+
+**Your Turn!**
+
+Now that you have a clear understanding of the approach, try implementing the Two Sum problem in your preferred programming language. Good luck!",54.623,ollama,llama3.2,0.3
+1,Two Sum,Easy,4,Implementation Guide,"Here's a TIER 4 hint with a C++ code template to help the student implement the Two Sum problem:
+
+**Two Sum Problem Solution**
+
+**Function Signature:**
+```cpp
+vector<int> twoSum(vector<int>& nums, int target);
+```
+**Function Description:**
+This function takes in an array of integers `nums` and an integer `target` as input, and returns a vector of two indices that correspond to the two numbers in the array that add up to the `target` value.
+
+**Code Template:**
+```cpp
+vector<int> twoSum(vector<int>& nums, int target) {
+    // TODO: Initialize an unordered map to store the numbers we've seen so far and their indices
+    unordered_map<int, int> numToIndex;
+
+    // TODO: Iterate through the array of numbers
+    for (int i = 0; i < nums.size(); i++) {
+        // TODO: Calculate the complement of the current number with respect to the target
+        int complement = target - nums[i];
+
+        // TODO: Check if the complement is in the unordered map
+        if (numToIndex.find(complement) != numToIndex.end()) {
+            // TODO: If the complement is found, return the indices of the current number and its complement
+            return {numToIndex[complement], i};
+        }
+
+        // TODO: If the complement is not found, add the current number and its index to the unordered map
+        numToIndex[nums[i]] = i;
+    }
+
+    // TODO: If no solution is found, return an empty vector
+    return {};
+}
+```
+**Explanation:**
+
+1. The function initializes an unordered map `numToIndex` to store the numbers we've seen so far and their indices.
+2. The function iterates through the array of numbers using a for loop.
+3. For each number, it calculates the complement of the number with respect to the target value.
+4. It checks if the complement is in the unordered map. If it is, it means we've found two numbers that add up to the target value, so it returns the indices of the current number and its complement.
+5. If the complement is not found, it adds the current number and its index to the unordered map.
+6. If no solution is found after iterating through the entire array, it returns an empty vector.
+
+**Example Use Case:**
+
+```cpp
+int main() {
+    vector<int> nums = {2, 7, 11, 15};
+    int target = 9;
+    vector<int> result = twoSum(nums, target);
+    cout << ""Indices: "" << result[0] << "", "" << result[1] << endl;
+    return 0;
+}
+```
+This code calls the `twoSum` function with the input array `nums` and the target value `9`, and prints the indices of the two numbers that add up to the target value.",74.926,ollama,llama3.2,0.3
+1,Two Sum,Easy,5,Full Solution Walkthrough,"I'd be happy to help you with the Two Sum problem. Here's a TIER 5 hint with a full solution walkthrough:
+
+**Problem Statement:**
+Given an array of integers `nums` and an integer `target`, return indices of two numbers that add up to `target`. Each input has exactly one solution.
+
+**Solution Walkthrough:**
+
+We will use an unordered map to store the numbers we have seen so far and their indices. This will allow us to find the complement of a number in O(1) time.
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+// Function to find two numbers that add up to the target
+std::vector<int> twoSum(std::vector<int>& nums, int target) {
+    // Create an unordered map to store the numbers and their indices
+    std::unordered_map<int, int> numToIndex;
+
+    // Iterate over the array of numbers
+    for (int i = 0; i < nums.size(); i++) {
+        // Calculate the complement of the current number
+        int complement = target - nums[i];
+
+        // Check if the complement is in the map
+        if (numToIndex.find(complement) != numToIndex.end()) {
+            // If the complement is in the map, return its index and the current index
+            return {numToIndex[complement], i};
+        }
+
+        // If the complement is not in the map, add the current number and its index to the map
+        numToIndex[nums[i]] = i;
+    }
+
+    // If no solution is found, return an empty vector
+    return {};
+}
+
+int main() {
+    // Example usage:
+    std::vector<int> nums = {2, 7, 11, 15};
+    int target = 9;
+    std::vector<int> result = twoSum(nums, target);
+
+    // Print the result
+    if (!result.empty()) {
+        std::cout << ""Indices of two numbers that add up to "" << target << "": "";
+        for (int i : result) {
+            std::cout << i << "" "";
+        }
+        std::cout << std::endl;
+    } else {
+        std::cout << ""No solution found."" << std::endl;
+    }
+
+    return 0;
+}
+```
+
+**Time and Space Complexity:**
+
+* Time complexity: O(n), where n is the size of the input array. This is because we are iterating over the array once.
+* Space complexity: O(n), where n is the size of the input array. This is because we are storing the numbers and their indices in an unordered map.
+
+**Common Edge Cases:**
+
+* If the input array is empty, the function should return an empty vector.
+* If the target is not found in the array, the function should return an empty vector.
+
+**Similar Problems to Practice:**
+
+* Three Sum: Given an array of integers `nums` and an integer `target`, return indices of three numbers that add up to `target`.
+* Four Sum: Given an array of integers `nums` and an integer `target`, return indices of four numbers that add up to `target`.
+* Maximum Sum Subarray: Given an array of integers `nums`, return the maximum sum of a subarray.
+
+These problems require similar techniques, such as using data structures to store the numbers and their indices, and iterating over the array to find the solution.",90.154,ollama,llama3.2,0.3
+2,Longest Substring Without Repeating Characters,Medium,1,Pattern Nudge,"Here's a TIER 1 hint:
+
+Think about using a combination of a sliding window and a data structure to keep track of unique characters in the current substring. This will involve some kind of data structure that can efficiently store and look up characters.",12.457,ollama,llama3.2,0.3
+2,Longest Substring Without Repeating Characters,Medium,2,Approach Direction,"Here's a TIER 2 hint to guide the student:
+
+To solve this problem, focus on using a data structure that can efficiently store and track unique characters in the substring. A hash table (or dictionary) is a suitable choice because it allows for fast lookups and insertions. This data structure will help you keep track of the unique characters in the current substring.
+
+As you start thinking about the approach, consider the following question: How can you efficiently handle the case where a repeating character is found in the substring, and what does this tell you about the optimal starting point for the substring?",20.447,ollama,llama3.2,0.3
+2,Longest Substring Without Repeating Characters,Medium,3,Detailed Strategy,"Here's a TIER 3 hint for the Longest Substring Without Repeating Characters problem:
+
+**Detailed Strategy:**
+
+1. **Initialize variables**: Initialize two variables, `max_length` and `current_length`, to 0. `max_length` will store the maximum length of substring without repeating characters, and `current_length` will store the length of the current substring.
+2. **Create a set**: Create an empty set, `char_set`, to store unique characters in the current substring.
+3. **Iterate through the string**: Iterate through the input string `s`.
+4. **Check for repeating characters**: For each character `c` in the string, check if it already exists in `char_set`.
+5. **Update `char_set`**: If `c` is not in `char_set`, add it to `char_set`. If `c` is in `char_set`, remove the first character of `char_set` (i.e., the character that is no longer in the current substring).
+6. **Update `current_length`**: Update `current_length` to be the size of `char_set`.
+7. **Update `max_length`**: Update `max_length` to be the maximum of `max_length` and `current_length`.
+8. **Repeat steps 3-7**: Repeat steps 3-7 until the end of the string `s`.
+
+**Key Insight or Trick:**
+
+The key insight here is to use a set to keep track of unique characters in the current substring. This allows us to efficiently check if a character is repeating in O(1) time. By removing the first character of `char_set` when a repeating character is found, we effectively ""slide"" the window of unique characters to the right, allowing us to find the longest substring without repeating characters.
+
+**Time and Space Complexity:**
+
+* Time complexity: O(n), where n is the length of the input string `s`, since we iterate through the string once and perform constant-time operations for each character.
+* Space complexity: O(min(n, m)), where m is the size of the character set (e.g., 26 for English letters), since we store at most min(n, m) unique characters in `char_set`.
+
+**Pseudocode Outline:**
+
+```
+function longestSubstringWithoutRepeatingChars(s):
+  max_length = 0
+  current_length = 0
+  char_set = empty set
+
+  for each c in s:
+    if c not in char_set:
+      char_set.add(c)
+      current_length = size of char_set
+    else:
+      char_set.remove(first character of char_set)
+      current_length = size of char_set
+
+    max_length = max(max_length, current_length)
+
+  return max_length
+```
+
+**Your Turn:**
+
+Implement the solution using the strategy outlined above. Good luck!",77.497,ollama,llama3.2,0.3
+2,Longest Substring Without Repeating Characters,Medium,4,Implementation Guide,"Here's a C++ code template to help you solve the Longest Substring Without Repeating Characters problem:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+// Function to find the length of the longest substring without repeating characters
+int lengthOfLongestSubstring(const std::string& s) {
+    // Initialize variables to store the maximum length and the current window
+    int maxLength = 0;
+    std::unordered_map<char, int> charIndexMap; // Map to store the last seen index of each character
+    int windowStart = 0; // Starting index of the current window
+
+    // Iterate over the string
+    for (int windowEnd = 0; windowEnd < s.length(); windowEnd++) {
+        // Get the current character
+        char rightChar = s[windowEnd];
+
+        // Check if the character is already in the map
+        if (charIndexMap.find(rightChar) != charIndexMap.end()) {
+            // If it is, update the window start index to be after the last seen index of the character
+            windowStart = std::max(windowStart, charIndexMap[rightChar] + 1);
+        }
+
+        // Update the last seen index of the character in the map
+        charIndexMap[rightChar] = windowEnd;
+
+        // Update the maximum length if the current window is larger
+        maxLength = std::max(maxLength, windowEnd - windowStart + 1);
+    }
+
+    // Return the maximum length
+    return maxLength;
+}
+
+int main() {
+    // TODO: test the function with some example inputs
+    std::string input = ""abcabcbb"";
+    int result = lengthOfLongestSubstring(input);
+    std::cout << ""Length of the longest substring without repeating characters: "" << result << std::endl;
+
+    return 0;
+}
+```
+
+Here's an explanation of the code:
+
+1.  We use an unordered map `charIndexMap` to store the last seen index of each character in the string. This map allows us to efficiently check if a character has been seen before and update its last seen index if necessary.
+2.  We maintain a window of characters in the string, with `windowStart` as the starting index of the window and `windowEnd` as the ending index. We update `windowStart` whenever we encounter a repeating character.
+3.  We iterate over the string, and for each character, we check if it's already in the map. If it is, we update `windowStart` to be after the last seen index of the character. If it's not, we update the last seen index of the character in the map.
+4.  We update the maximum length of the substring without repeating characters whenever the current window is larger.
+5.  Finally, we return the maximum length.
+
+This template should provide a good starting point for solving the problem. You can fill in the TODO comments with your implementation and test the function with some example inputs.",82.93,ollama,llama3.2,0.3
+2,Longest Substring Without Repeating Characters,Medium,5,Full Solution Walkthrough,"Here's a complete solution walkthrough for the Longest Substring Without Repeating Characters problem in C++.
+
+**Problem Statement:**
+Given a string `s`, find the length of the longest substring without repeating characters.
+
+**Solution Walkthrough:**
+
+```cpp
+#include <iostream>
+#include <unordered_map>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+int lengthOfLongestSubstring(string s) {
+    int maxLength = 0;
+    unordered_map<char, int> charIndexMap;
+    stack<char> charStack;
+
+    for (int i = 0; i < s.length(); i++) {
+        char currentChar = s[i];
+        if (charIndexMap.find(currentChar) != charIndexMap.end()) {
+            // If the character is already in the map, 
+            // update the start index of the substring
+            int startIndex = charIndexMap[currentChar] + 1;
+            charStack = stack<char>();
+            for (int j = startIndex; j <= i; j++) {
+                charStack.push(s[j]);
+            }
+            charIndexMap.clear();
+            charIndexMap[currentChar] = i;
+        } else {
+            // If the character is not in the map, 
+            // add it to the map and push it to the stack
+            charIndexMap[currentChar] = i;
+            charStack.push(currentChar);
+        }
+
+        // Update the maximum length
+        maxLength = max(maxLength, (int)charStack.size());
+    }
+
+    return maxLength;
+}
+
+int main() {
+    string s = ""abcabcbb"";
+    int result = lengthOfLongestSubstring(s);
+    cout << ""Length of the longest substring without repeating characters: "" << result << endl;
+    return 0;
+}
+```
+
+**Explanation:**
+
+1.  We use an unordered map `charIndexMap` to store the characters and their last seen indices.
+2.  We use a stack `charStack` to store the characters in the current substring.
+3.  We iterate through the string `s` and for each character, we check if it's already in the map.
+4.  If it's already in the map, we update the start index of the substring by moving the stack to the character's next index.
+5.  If it's not in the map, we add it to the map and push it to the stack.
+6.  We update the maximum length by comparing the current stack size with the maximum length.
+7.  Finally, we return the maximum length.
+
+**Time Complexity:**
+The time complexity is O(n), where n is the length of the string `s`, because we're iterating through the string once.
+
+**Space Complexity:**
+The space complexity is also O(n), where n is the length of the string `s`, because in the worst case, we might store all characters in the map and the stack.
+
+**Common Edge Cases:**
+
+*   An empty string: The function should return 0.
+*   A string with only one unique character: The function should return the length of the string.
+*   A string with repeating characters: The function should return the length of the longest substring without repeating characters.
+
+**Similar Problems to Practice:**
+
+*   Longest Substring with K Distinct Characters
+*   Longest Palindromic Substring
+*   Minimum Window Substring
+*   Next Greater Element to the Right
+*   Maximum Subarray Sum",94.515,ollama,llama3.2,0.3
+3,House Robber,Medium,1,Pattern Nudge,"Here's a TIER 1 hint:
+
+Think about the problem as a variation of the ""subset sum problem"" where you're looking for the maximum subset that can be formed without having two adjacent elements.",9.378,ollama,llama3.2,0.3
+3,House Robber,Medium,2,Approach Direction,"Here's a TIER 2 hint:
+
+To approach this problem, think about the high-level strategy of using two pointers starting from both ends of the array. This is because the problem statement asks you to find the maximum amount that can be robbed without robbing two adjacent houses, which implies that you need to consider the maximum amount that can be robbed from the houses at the ends of the array. You can use an array to store the maximum amount that can be robbed up to each house, and this array will help you keep track of the maximum amount that can be robbed without robbing two adjacent houses. 
+
+Consider how the maximum amount that can be robbed from the houses at the ends of the array will affect the maximum amount that can be robbed from the houses in the middle.",24.517,ollama,llama3.2,0.3
+3,House Robber,Medium,3,Detailed Strategy,"Here's a detailed hint to help the student solve the House Robber problem:
+
+**Step-by-Step Strategy:**
+
+1. **Define the problem and identify the constraints**: We need to find the maximum amount of money that can be robbed from a sequence of houses without robbing two adjacent houses. The constraint is that we cannot rob two adjacent houses.
+2. **Identify the base cases**: The maximum amount of money that can be robbed from an empty sequence of houses is 0. If there's only one house, we can rob it and get the money in that house.
+3. **Develop a recurrence relation**: Let's denote the maximum amount of money that can be robbed from a sequence of houses as `dp[i]`. We have two options:
+	* Rob the current house and skip the next one: `dp[i] = money[i] + dp[i-2]`
+	* Don't rob the current house and skip it: `dp[i] = dp[i-1]`
+4. **Create a table to store the dynamic programming values**: We'll use an array `dp` of size `n+1`, where `n` is the number of houses. The `dp[i]` value will store the maximum amount of money that can be robbed from the first `i` houses.
+5. **Fill the table using the recurrence relation**: We'll iterate through the houses from left to right, applying the recurrence relation to fill the `dp` table.
+
+**Pseudocode Outline:**
+
+```
+function houseRobber(money):
+  n = length(money)
+  dp = array(n+1, 0)
+
+  for i from 1 to n:
+    dp[i] = max(money[i-1] + dp[i-2], dp[i-1])
+
+  return dp[n]
+```
+
+**Key Insight or Trick:**
+
+The key insight here is that we can't rob two adjacent houses, so we need to skip one house when we rob the previous one. This is why we use `dp[i-2]` in the recurrence relation.
+
+**Time and Space Complexity:**
+
+The time complexity is O(n), where n is the number of houses, because we're iterating through the houses once. The space complexity is O(n) as well, because we're using an array of size n+1 to store the dynamic programming values.
+
+**Your Turn:**
+
+Now that you have this detailed hint, it's your turn to implement the solution. Try filling in the `dp` table using the recurrence relation and see if you can get the correct answer. Good luck!",67.39,ollama,llama3.2,0.3
+3,House Robber,Medium,4,Implementation Guide,"Here's a C++ code template for the House Robber problem:
+
+```cpp
+#include <vector>
+#include <unordered_map>
+
+// Function to find the maximum amount that can be robbed without robbing two adjacent houses
+int houseRobber(std::vector<int>& nums) {
+    // TODO: Define the base case for the recurrence relation
+    int n = nums.size();
+    std::vector<int> dp(n, 0); // dp[i] stores the maximum amount that can be robbed up to the ith house
+
+    // Initialize the base case
+    dp[0] = nums[0]; // If there's only one house, we can rob it
+    if (n > 1) {
+        dp[1] = std::max(nums[0], nums[1]); // If there are two houses, we can rob the first one
+    }
+
+    // TODO: Fill in the recurrence relation
+    for (int i = 2; i < n; i++) {
+        // For each house, we have two options: rob it or don't rob it
+        // We choose the option that gives us the maximum amount
+        dp[i] = std::max(dp[i-1], dp[i-2] + nums[i]);
+    }
+
+    // TODO: Return the maximum amount that can be robbed
+    return dp[n-1];
+}
+```
+
+Here's an explanation of each section:
+
+1.  The function `houseRobber` takes a vector of integers `nums` as input, representing the money in houses.
+2.  We define a vector `dp` of the same size as `nums`, where `dp[i]` stores the maximum amount that can be robbed up to the `i`th house.
+3.  We initialize the base case by setting `dp[0]` to `nums[0]`, since we can rob the first house. If there are two houses, we set `dp[1]` to the maximum of `nums[0]` and `nums[1]`, since we can rob either the first or the second house.
+4.  We fill in the recurrence relation by iterating from the third house to the last house. For each house, we have two options: rob it or don't rob it. We choose the option that gives us the maximum amount, which is the maximum of `dp[i-1]` (not robbing the current house) and `dp[i-2] + nums[i]` (robbing the current house).
+5.  Finally, we return the maximum amount that can be robbed, which is stored in `dp[n-1]`.
+
+This code template should help the student implement the House Robber problem using dynamic programming.",68.244,ollama,llama3.2,0.3
+3,House Robber,Medium,5,Full Solution Walkthrough,"Here's a TIER 5 hint with a full solution walkthrough for the House Robber problem.
+
+**Problem Statement:**
+Given an integer array representing money in houses, find the maximum amount that can be robbed without robbing two adjacent houses.
+
+**Example:**
+Input: `nums = [1,2,3,1]`
+Output: `4`
+Explanation: Rob the first house (1), rob the third house (3), and rob the fourth house (1). The maximum amount that can be robbed is 4.
+
+**Solution:**
+
+```cpp
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+// Function to find the maximum amount that can be robbed
+int rob(std::vector<int>& nums) {
+    // Base case: If the input array is empty, return 0
+    if (nums.empty()) {
+        return 0;
+    }
+
+    // Initialize a vector to store the maximum amount that can be robbed up to each house
+    std::vector<int> dp(nums.size(), 0);
+
+    // Base case: The maximum amount that can be robbed from the first house is the value of the first house
+    dp[0] = nums[0];
+
+    // If there's only one house, return the value of the house
+    if (nums.size() == 1) {
+        return dp[0];
+    }
+
+    // Initialize the maximum amount that can be robbed from the first two houses
+    dp[1] = std::max(nums[0], nums[1]);
+
+    // Iterate over the houses starting from the third house
+    for (int i = 2; i < nums.size(); i++) {
+        // The maximum amount that can be robbed up to the current house is the maximum of:
+        // 1. The maximum amount that can be robbed up to the previous house (excluding the current house)
+        // 2. The maximum amount that can be robbed up to the house two positions before the current house (including the current house)
+        dp[i] = std::max(dp[i-1], dp[i-2] + nums[i]);
+    }
+
+    // Return the maximum amount that can be robbed up to the last house
+    return dp.back();
+}
+```
+
+**Time and Space Complexity:**
+The time complexity of this solution is O(n), where n is the number of houses. This is because we iterate over the houses once.
+
+The space complexity is also O(n), as we need to store the maximum amount that can be robbed up to each house in a vector.
+
+**Common Edge Cases:**
+
+*   An empty array: In this case, we return 0, as there are no houses to rob.
+*   An array with only one house: In this case, we return the value of the house, as we can rob it without any restrictions.
+*   An array with only two houses: In this case, we return the maximum value between the two houses, as we can rob either one of them.
+
+**Similar Problems to Practice:**
+
+*   Fibonacci Series: This problem is similar to the Fibonacci series problem, where we need to find the nth Fibonacci number.
+*   Longest Substring Without Repeating Characters: This problem is similar to the longest substring without repeating characters problem, where we need to find the longest substring without repeating characters.
+*   Maximum Subarray Problem: This problem is similar to the maximum subarray problem, where we need to find the maximum contiguous subarray.
+
+**Practice Problems:**
+
+*   1D Array Problems: Practice solving problems that involve 1D arrays, such as finding the maximum sum of a subarray or the longest substring without repeating characters.
+*   Dynamic Programming Problems: Practice solving problems that involve dynamic programming, such as the Fibonacci series or the longest common subsequence.
+*   Greedy Algorithm Problems: Practice solving problems that involve greedy algorithms, such as the maximum subarray problem or the longest substring without repeating characters.",97.475,ollama,llama3.2,0.3
+4,Number of Islands,Medium,1,Pattern Nudge,"Here's a TIER 1 hint:
+
+Think about using a technique that allows you to explore all the connected cells in the grid, one island at a time. This will help you build up a count of all the islands, rather than just looking at the grid as a whole.",11.657,ollama,llama3.2,0.3
+4,Number of Islands,Medium,2,Approach Direction,"Here's a TIER 2 hint:
+
+To tackle the traversal logic, think of using a data structure that can keep track of the visited cells. A queue (or a stack) would be a good fit because it can efficiently store and retrieve cells to visit next. This data structure will allow you to explore the grid level by level, ensuring that you don't revisit the same cell.
+
+Can you think of a way to initialize the queue with the starting cells of the grid, and then use the queue to keep track of the cells to visit next?",16.872,ollama,llama3.2,0.3
+4,Number of Islands,Medium,3,Detailed Strategy,"Here's a TIER 3 hint for the Number of Islands problem:
+
+**Detailed Strategy:**
+
+1. **Preprocessing:**
+   - Create a visited matrix to keep track of visited cells.
+   - Initialize all cells to 0 (unvisited) in the visited matrix.
+
+2. **Traversal:**
+   - Iterate through each cell in the grid.
+   - If a cell is land (1) and has not been visited, perform a depth-first search (DFS) from that cell.
+   - During DFS, mark all connected land cells as visited and increment the island count.
+
+3. **DFS:**
+   - Create a stack to store cells to be visited.
+   - Push the current cell onto the stack.
+   - While the stack is not empty:
+     - Pop the top cell from the stack.
+     - Mark the cell as visited.
+     - Explore all unvisited neighboring land cells (horizontally and vertically).
+     - Push unvisited neighboring land cells onto the stack.
+
+4. **Postprocessing:**
+   - After traversing all cells, the island count will be stored in the visited matrix.
+
+**Key Insight:**
+The key insight here is that we can use DFS to traverse all connected land cells in the grid, which allows us to efficiently count the number of islands.
+
+**Time and Space Complexity:**
+The time complexity is O(R*C), where R is the number of rows and C is the number of columns in the grid, because we visit each cell once. The space complexity is O(R*C) as well, due to the visited matrix and the stack used in DFS.
+
+**Pseudocode Outline:**
+
+```
+function countIslands(grid):
+  visited = createVisitedMatrix(grid)
+  islandCount = 0
+
+  for each cell in grid:
+    if cell == 1 and not visited[cell]:
+      dfs(grid, visited, cell, islandCount)
+
+  return islandCount
+
+function dfs(grid, visited, cell, islandCount):
+  stack = createStack()
+  stack.push(cell)
+
+  while stack is not empty:
+    currentCell = stack.pop()
+    markAsVisited(currentCell, visited)
+
+    for each neighboring cell:
+      if neighboring cell is land and not visited[neighboring cell]:
+        push neighboring cell onto stack
+        islandCount++
+
+  return islandCount
+```
+
+Now it's your turn to implement the solution!",60.349,ollama,llama3.2,0.3
+4,Number of Islands,Medium,4,Implementation Guide,"Here's a TIER 4 hint with a C++ code template to help the student with the implementation:
+
+```cpp
+#include <vector>
+#include <unordered_map>
+
+// Function to count the number of islands in a given grid
+int numIslands(std::vector<std::vector<char>>& grid) {
+    // TODO: Initialize the count of islands
+    int count = 0;
+    
+    // Iterate over each cell in the grid
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[i].size(); j++) {
+            // Check if the current cell is a land cell
+            if (grid[i][j] == 'L') {
+                // TODO: Call the DFS function to count the number of islands
+                // starting from the current cell
+                dfs(grid, i, j);
+                // Increment the count of islands
+                count++;
+            }
+        }
+    }
+    
+    // Return the total count of islands
+    return count;
+}
+
+// Function to perform DFS traversal from a given cell
+void dfs(std::vector<std::vector<char>>& grid, int i, int j) {
+    // Check if the current cell is within the grid boundaries
+    if (i < 0 || j < 0 || i >= grid.size() || j >= grid[i].size()) {
+        return;
+    }
+    
+    // Check if the current cell is a water cell
+    if (grid[i][j] == 'W') {
+        return;
+    }
+    
+    // Mark the current cell as visited by changing its value to 'W'
+    grid[i][j] = 'W';
+    
+    // Perform DFS traversal on the neighboring cells
+    dfs(grid, i - 1, j);  // Up
+    dfs(grid, i + 1, j);  // Down
+    dfs(grid, i, j - 1);  // Left
+    dfs(grid, i, j + 1);  // Right
+}
+
+// Function to print the grid for visualization
+void printGrid(std::vector<std::vector<char>>& grid) {
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[i].size(); j++) {
+            std::cout << grid[i][j] << "" "";
+        }
+        std::cout << std::endl;
+    }
+}
+
+int main() {
+    // Create a sample grid
+    std::vector<std::vector<char>> grid = {
+        {'L', 'W', 'L', 'W'},
+        {'W', 'L', 'W', 'L'},
+        {'L', 'W', 'L', 'W'},
+        {'W', 'L', 'W', 'L'}
+    };
+    
+    // Print the initial grid
+    std::cout << ""Initial Grid:"" << std::endl;
+    printGrid(grid);
+    
+    // Count the number of islands
+    int count = numIslands(grid);
+    
+    // Print the final count of islands
+    std::cout << ""Number of Islands: "" << count << std::endl;
+    
+    return 0;
+}
+```
+
+**Explanation:**
+
+*   The `numIslands` function takes a 2D grid of characters as input and returns the total count of islands.
+*   It iterates over each cell in the grid and checks if the current cell is a land cell ('L'). If it is, it calls the `dfs` function to count the number of islands starting from the current cell.
+*   The `dfs` function performs a depth-first search traversal from a given cell. It checks if the current cell is within the grid boundaries and is a land cell. If it is, it marks the current cell as visited by changing its value to 'W' and then recursively calls itself on the neighboring cells.
+*   The `printGrid` function is used to print the grid for visualization purposes.
+
+**Student's Task:**
+
+*   Fill in the TODO comments with the necessary code to implement the `numIslands` and `dfs` functions.
+*   Test the code with a sample grid and print the final count of islands.",117.822,ollama,llama3.2,0.3
+4,Number of Islands,Medium,5,Full Solution Walkthrough,"Here's a full solution walkthrough for the ""Number of Islands"" problem:
+
+**Problem Statement:**
+Given a 2D grid of land and water, count the number of islands. Islands are connected horizontally or vertically.
+
+**Solution Walkthrough:**
+
+We will use a depth-first search (DFS) approach to traverse the grid and count the number of islands.
+
+**Complete Working Solution in C++:**
+```cpp
+#include <vector>
+#include <unordered_set>
+
+class Solution {
+public:
+    int numIslands(std::vector<std::vector<char>>& grid) {
+        // Initialize the count of islands
+        int count = 0;
+
+        // Iterate over each cell in the grid
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid[0].size(); j++) {
+                // If the cell is land (represented by 'L'), perform DFS
+                if (grid[i][j] == 'L') {
+                    dfs(grid, i, j);
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    void dfs(std::vector<std::vector<char>>& grid, int i, int j) {
+        // Check if the cell is within the grid boundaries
+        if (i < 0 || i >= grid.size() || j < 0 || j >= grid[0].size() || grid[i][j] != 'L') {
+            return;
+        }
+
+        // Mark the cell as visited by changing it to 'V'
+        grid[i][j] = 'V';
+
+        // Perform DFS on adjacent cells
+        dfs(grid, i - 1, j);  // Up
+        dfs(grid, i + 1, j);  // Down
+        dfs(grid, i, j - 1);  // Left
+        dfs(grid, i, j + 1);  // Right
+    }
+};
+```
+**Explanation:**
+
+1.  We start by initializing a variable `count` to keep track of the number of islands.
+2.  We iterate over each cell in the grid using two nested loops.
+3.  For each cell, we check if it's land (represented by 'L'). If it is, we perform a depth-first search (DFS) using the `dfs` function.
+4.  The `dfs` function checks if the current cell is within the grid boundaries and if it's land. If not, it returns immediately.
+5.  We mark the current cell as visited by changing it to 'V' to avoid revisiting it later.
+6.  We then perform DFS on the adjacent cells (up, down, left, and right) by recursively calling the `dfs` function.
+7.  After visiting all adjacent cells, we increment the `count` variable to keep track of the number of islands.
+8.  Finally, we return the total count of islands.
+
+**Time and Space Complexity:**
+
+*   Time complexity: O(M \* N), where M is the number of rows and N is the number of columns in the grid. This is because we visit each cell once during the DFS traversal.
+*   Space complexity: O(M \* N), where M is the number of rows and N is the number of columns in the grid. This is because we use a recursive DFS approach, which can lead to a maximum recursion depth of M \* N.
+
+**Common Edge Cases:**
+
+*   An empty grid: In this case, the function should return 0, as there are no islands.
+*   A grid with only water cells: In this case, the function should return 0, as there are no islands.
+*   A grid with only land cells: In this case, the function should return the total number of land cells, as each land cell represents an island.
+
+**Similar Problems to Practice:**
+
+*   [Number of Islands II](https://leetcode.com/problems/number-of-islands-ii/): This problem is similar to the original problem, but it requires you to count the number of islands with different sizes.
+*   [Island Path](https://leetcode.com/problems/island-path/): This problem requires you to find the shortest path between two islands in a grid.
+*   [Island Merge](https://leetcode.com/problems/island-merge/): This problem requires you to merge two islands in a grid while maintaining the connectivity of the islands.",105.457,ollama,llama3.2,0.3
+5,Merge K Sorted Lists,Hard,1,Pattern Nudge,"Here's a TIER 1 hint:
+
+Think about using a priority queue to keep track of the smallest node from each list, and then use this information to build the merged sorted list.",8.081,ollama,llama3.2,0.3
+5,Merge K Sorted Lists,Hard,2,Approach Direction,"Here's a TIER 2 hint to help the student:
+
+To solve this problem, think about how you can use a data structure that allows you to efficiently keep track of the smallest element from all the linked lists. A priority queue (like a min heap) would be a good choice because it can always find the smallest element in O(1) time. By using a priority queue, you can efficiently select the smallest element from all the linked lists and add it to your merged list. 
+
+What if you had a priority queue where each element is a pair of the smallest element from a linked list and the index of that linked list? How would you use this data structure to merge the linked lists?",18.388,ollama,llama3.2,0.3
+5,Merge K Sorted Lists,Hard,3,Detailed Strategy,"Here's a TIER 3 hint for the Merge K Sorted Lists problem:
+
+**Step-by-Step Strategy:**
+
+1. **Create a min-heap**: Create a min-heap to store the nodes from the k sorted linked lists. The min-heap will help us keep track of the smallest node from each list.
+2. **Initialize the min-heap**: Initialize the min-heap with the head nodes from each of the k sorted linked lists. Store the node, its value, and the index of the list it belongs to.
+3. **Pop the smallest node from the min-heap**: Pop the smallest node from the min-heap and add it to the result linked list.
+4. **Update the min-heap**: Update the min-heap by pushing the next node from the same list that the popped node belonged to. If the next node exists, store its value, the index of the list it belongs to, and a flag to indicate that it's the next node.
+5. **Repeat steps 3-4**: Repeat steps 3-4 until the min-heap is empty.
+6. **Return the result linked list**: Return the result linked list, which is now the merged and sorted linked list.
+
+**Pseudocode Outline:**
+```
+FUNCTION mergeKLists(lists):
+  minHeap = NEW minHeap()
+  FOR i = 0 TO k-1:
+    ENQUEUE(lists[i].head, minHeap)
+  
+  WHILE minHeap IS NOT EMPTY:
+    node = DEQUEUE(minHeap)
+    resultList = resultList OR node.value
+    IF node.next EXIST:
+      ENQUEUE(node.next, minHeap)
+  
+  RETURN resultList
+```
+**Key Insight or Trick:**
+
+The key insight here is to use a min-heap to keep track of the smallest node from each list. By using a min-heap, we can efficiently select the smallest node from each list and add it to the result linked list.
+
+**Time and Space Complexity:**
+
+The time complexity of this solution is O(N log k), where N is the total number of nodes across all lists and k is the number of lists. This is because we're using a min-heap to select the smallest node from each list, which takes O(log k) time per node.
+
+The space complexity is O(k), which is the space required to store the min-heap.
+
+**Implementation:**
+
+Now it's your turn to implement the solution! You can use a data structure like a priority queue or a heap to implement the min-heap. You'll also need to implement the logic for updating the min-heap and adding nodes to the result linked list. Good luck!",62.254,ollama,llama3.2,0.3
+5,Merge K Sorted Lists,Hard,4,Implementation Guide,"Here's a C++ code template for the Merge K Sorted Lists problem:
+
+```cpp
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+// Function to merge k sorted linked lists
+// Returns the head of the merged sorted linked list
+ListNode* mergeKLists(vector<ListNode*>& lists) {
+    // TODO: Initialize a priority queue to store the nodes from the linked lists
+    // The priority queue will be sorted based on the node values
+    priority_queue<ListNode*, vector<ListNode*>, greater<ListNode*>> pq;
+
+    // TODO: Add the head of each linked list to the priority queue
+    for (ListNode* list : lists) {
+        if (list) {
+            pq.push(list);
+        }
+    }
+
+    // TODO: Initialize the head of the merged linked list
+    ListNode* head = new ListNode(0);
+    ListNode* current = head;
+
+    // TODO: While the priority queue is not empty
+    while (!pq.empty()) {
+        // TODO: Get the node with the smallest value from the priority queue
+        ListNode* smallest = pq.top();
+        pq.pop();
+
+        // TODO: Add the smallest node to the merged linked list
+        current->next = smallest;
+        current = current->next;
+
+        // TODO: If the smallest node has a next node, add it to the priority queue
+        if (smallest->next) {
+            pq.push(smallest->next);
+        }
+    }
+
+    // TODO: Return the head of the merged linked list
+    return head->next;
+}
+```
+
+Here's a breakdown of each section:
+
+1.  **ListNode struct**: This is a simple implementation of a singly-linked list node. It has an integer value and a pointer to the next node in the list.
+2.  **mergeKLists function**: This function takes a vector of `ListNode*` pointers as input, where each pointer represents the head of a linked list. It returns the head of the merged sorted linked list.
+3.  **Priority queue initialization**: The function initializes a priority queue using `priority_queue`. The priority queue is sorted based on the node values, with the smallest value at the top.
+4.  **Adding head nodes to the priority queue**: The function adds the head of each linked list to the priority queue. If a linked list is empty, it is skipped.
+5.  **Initializing the head of the merged linked list**: The function creates a new `ListNode` with a value of 0 and sets it as the head of the merged linked list.
+6.  **Merging linked lists**: The function enters a loop that continues until the priority queue is empty. In each iteration, it gets the node with the smallest value from the priority queue, adds it to the merged linked list, and adds its next node to the priority queue if it exists.
+7.  **Returning the head of the merged linked list**: The function returns the head of the merged linked list, which is the node after the dummy node created at the beginning.
+
+This implementation has a time complexity of O(N log k), where N is the total number of nodes across all linked lists, and k is the number of linked lists. The space complexity is O(k), which is the space required by the priority queue.",79.597,ollama,llama3.2,0.3
+5,Merge K Sorted Lists,Hard,5,Full Solution Walkthrough,"Here is a TIER 5 solution walkthrough for the ""Merge K Sorted Lists"" problem:
+
+**Problem Statement:**
+Given an array of k sorted linked lists, merge them into one sorted linked list and return its head.
+
+**Solution Overview:**
+We will use a priority queue to efficiently select the smallest element from each list and add it to the result list. We will also use a vector to store the heads of the lists and an unordered_map to keep track of the current position in each list.
+
+**Complete Working Solution in C++:**
+```cpp
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <unordered_map>
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+// Function to merge k sorted linked lists
+ListNode* mergeKLists(std::vector<ListNode*>& lists) {
+    // Create a priority queue to store the smallest element from each list
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
+    for (int i = 0; i < lists.size(); i++) {
+        if (lists[i] != NULL) {
+            pq.push({lists[i]->val, i});
+        }
+    }
+
+    // Create a vector to store the heads of the lists
+    std::vector<ListNode*> heads(lists.size());
+
+    // Create an unordered_map to keep track of the current position in each list
+    std::unordered_map<int, int> pos(lists.size(), 0);
+
+    // Create a result list
+    ListNode* result = NULL;
+
+    // While the priority queue is not empty
+    while (!pq.empty()) {
+        // Get the smallest element from the priority queue
+        int val = pq.top().first;
+        int listIndex = pq.top().second;
+        pq.pop();
+
+        // Add the element to the result list
+        ListNode* newNode = new ListNode(val);
+        if (result == NULL) {
+            result = newNode;
+        } else {
+            ListNode* current = result;
+            while (current->next != NULL) {
+                current = current->next;
+            }
+            current->next = newNode;
+        }
+
+        // Update the position in the list
+        pos[listIndex]++;
+
+        // If the list has more elements, add it to the priority queue
+        if (pos[listIndex] < lists[listIndex]->next != NULL) {
+            pq.push({lists[listIndex]->next->val, listIndex});
+        }
+    }
+
+    return result;
+}
+
+// Function to print the linked list
+void printList(ListNode* head) {
+    while (head != NULL) {
+        std::cout << head->val << "" "";
+        head = head->next;
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    // Create three sorted linked lists
+    ListNode* list1 = new ListNode(1);
+    list1->next = new ListNode(4);
+    list1->next->next = new ListNode(5);
+
+    ListNode* list2 = new ListNode(1);
+    list2->next = new ListNode(3);
+    list2->next->next = new ListNode(4);
+
+    ListNode* list3 = new ListNode(2);
+    list3->next = new ListNode(6);
+
+    // Merge the linked lists
+    std::vector<ListNode*> lists = {list1, list2, list3};
+    ListNode* result = mergeKLists(lists);
+
+    // Print the merged linked list
+    printList(result);
+
+    return 0;
+}
+```
+
+**Walkthrough:**
+
+1. We create a priority queue `pq` to store the smallest element from each list. We iterate through each list and add its head to the priority queue.
+2. We create a vector `heads` to store the heads of the lists.
+3. We create an unordered_map `pos` to keep track of the current position in each list.
+4. We create a result list `result`.
+5. We iterate through the priority queue until it is empty. For each element, we add it to the result list and update the position in the corresponding list.
+6. If the list has more elements, we add it to the priority queue.
+7. Finally, we return the result list.
+
+**Time and Space Complexity:**
+
+* Time complexity: O(N log k), where N is the total number of elements across all lists and k is the number of lists.
+* Space complexity: O(k), where k is the number of lists.
+
+**Common Edge Cases:**
+
+* Empty lists: If all lists are empty, the function returns NULL.
+* Single list: If there is only one list, the function returns the head of that list.
+* Duplicate values: If there are duplicate values in the lists, the function will return the smallest value from each list.
+
+**Similar Problems to Practice:**
+
+* Merge two sorted linked lists
+* Merge three sorted linked lists
+* Merge k sorted arrays
+* Find the middle element of a linked list
+* Reverse a linked list",125.172,ollama,llama3.2,0.3

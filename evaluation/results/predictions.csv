@@ -1,0 +1,25 @@
+message,expected_intent,has_code_block,predicted_intent,correct
+What is Two Sum?,QUESTION_LOOKUP,False,QUESTION_LOOKUP,True
+LeetCode 121,QUESTION_LOOKUP,False,QUESTION_LOOKUP,True
+Tell me about Merge Intervals,QUESTION_LOOKUP,False,QUESTION_LOOKUP,True
+42,QUESTION_LOOKUP,False,QUESTION_LOOKUP,True
+Fix my code,CODE_FIX,False,CODE_FIX,True
+My program gives the wrong output,CODE_FIX,False,CODE_FIX,True
+Why is my C++ code failing?,CODE_FIX,False,CODE_FIX,True
+```cpp int main() {} ```,CODE_FIX,True,CODE_FIX,True
+Give me a hint for this problem,HINT_REQUEST,False,HINT_REQUEST,True
+I'm stuck. Where should I start?,HINT_REQUEST,False,HINT_REQUEST,True
+Can you guide me towards an approach?,HINT_REQUEST,False,HINT_REQUEST,True
+"Don't give me the answer, just a nudge",HINT_REQUEST,False,HINT_REQUEST,True
+Explain the sliding window technique,CONCEPT_QUESTION,False,CONCEPT_QUESTION,True
+When should I use BFS?,CONCEPT_QUESTION,False,CONCEPT_QUESTION,True
+What is dynamic programming?,CONCEPT_QUESTION,False,CONCEPT_QUESTION,True
+Explain time complexity of binary search,CONCEPT_QUESTION,False,CONCEPT_QUESTION,True
+Hello Sahiii,GENERAL_CHAT,False,GENERAL_CHAT,True
+Thank you for helping me,GENERAL_CHAT,False,GENERAL_CHAT,True
+Can you explain that again?,GENERAL_CHAT,False,GENERAL_CHAT,True
+"Okay, I understand now",GENERAL_CHAT,False,GENERAL_CHAT,True
+Show me the complete solution,SOLUTION_REQUEST,False,SOLUTION_REQUEST,True
+"I give up, give me the answer",SOLUTION_REQUEST,False,SOLUTION_REQUEST,True
+Give me the full C++ code,SOLUTION_REQUEST,False,SOLUTION_REQUEST,True
+Reveal the final solution,SOLUTION_REQUEST,False,SOLUTION_REQUEST,True

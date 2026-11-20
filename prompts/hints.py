@@ -4,6 +4,12 @@ Hint Templates — progressive hint system (5 tiers) + code fix + question looku
 
 # ── 5-Tier Progressive Hint System ──────────────────────────────
 
+"""
+Hint Templates — progressive hint system (5 tiers) + code fix + question lookup prompts.
+"""
+
+# ── 5-Tier Progressive Hint System ──────────────────────────────
+
 HINT_TIERS = {
     1: {
         "name": "Pattern Nudge",
@@ -83,6 +89,93 @@ Give a TIER 5 hint — full solution walkthrough:
 - Suggest similar problems to practice.""",
     },
 }
+
+
+def get_hint_prompt(tier: int, problem: str, user_message: str) -> str:
+    """Get the formatted hint prompt for a specific tier."""
+    tier = max(1, min(5, tier))
+    template = HINT_TIERS[tier]["prompt"]
+    return template.format(problem=problem, user_message=user_message)
+
+
+# ── Code Fix Prompt ─────────────────────────────────────────────
+
+CODE_FIX_PROMPT = """You are an expert code debugger and DSA mentor. The student has C++ code with errors and needs help fixing it.
+
+## Student's Code
+```{language}
+{code}
+```
+
+## Problem Context
+{problem_context}
+
+## Student's Question
+{user_message}
+
+## Instructions
+1. **Carefully analyze the code** line by line.
+2. **List ALL errors found** — be thorough:
+   - Syntax errors
+   - Logical errors (wrong algorithm, wrong conditions)
+   - Edge case failures (empty input, single element, overflow)
+   - Off-by-one errors
+   - Wrong data structure / STL usage
+   - Missing return statements
+   - Incorrect variable initialization
+   - Integer overflow (use long long when needed)
+3. **For each error**, explain:
+   - What line has the error
+   - What's wrong
+   - Why it's wrong
+   - What the fix is
+4. **Show the CORRECTED C++ code** with `// FIXED: ...` comments on changed lines.
+5. **Walk through the fix** with a small example to prove it works.
+6. **Mention the time/space complexity** of the corrected solution.
+
+Be thorough but encouraging. The goal is for the student to LEARN from their mistakes."""
+
+
+def get_code_fix_prompt(
+    code: str,
+    user_message: str,
+    problem_context: str = "",
+    language: str = "python",
+) -> str:
+    """Build the code fix prompt."""
+    return CODE_FIX_PROMPT.format(
+        code=code,
+        user_message=user_message,
+        problem_context=problem_context or "Not specified",
+        language=language,
+    )
+
+
+# ── LeetCode Question Lookup Prompt ─────────────────────────────
+
+QUESTION_LOOKUP_PROMPT = """The student is asking about a LeetCode problem. Provide the full problem description and initial guidance.
+
+## Problem Identifier
+{problem_identifier}
+
+## Instructions
+1. **Show the full problem description** including:
+   - Problem title and number (if known)
+   - Problem statement (the actual question)
+   - Example inputs and outputs (at least 2 examples)
+   - Constraints (input size limits, value ranges)
+2. **Identify the pattern(s)** that apply to this problem (e.g., Two Pointers, BFS, DP).
+3. **Rate the difficulty** and explain why.
+4. **Ask the student** what approach they're thinking of BEFORE giving hints.
+5. **Do NOT give the solution** — just present the problem and ask for their thoughts.
+
+If you recognize the problem, provide accurate details. If the identifier is ambiguous, mention the most likely match."""
+
+
+def get_question_lookup_prompt(problem_identifier: str) -> str:
+    """Build the question lookup prompt for a LeetCode problem name/number."""
+    return QUESTION_LOOKUP_PROMPT.format(problem_identifier=problem_identifier)
+
 
 
 def get_hint_prompt(tier: int, problem: str, user_message: str) -> str:
