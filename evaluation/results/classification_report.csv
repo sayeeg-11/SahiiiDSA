@@ -1,0 +1,10 @@
+,precision,recall,f1-score,support
+QUESTION_LOOKUP,1.0,1.0,1.0,4.0
+CODE_FIX,1.0,1.0,1.0,4.0
+HINT_REQUEST,1.0,1.0,1.0,4.0
+CONCEPT_QUESTION,1.0,1.0,1.0,4.0
+GENERAL_CHAT,1.0,1.0,1.0,4.0
+SOLUTION_REQUEST,1.0,1.0,1.0,4.0
+accuracy,1.0,1.0,1.0,1.0
+macro avg,1.0,1.0,1.0,24.0
+weighted avg,1.0,1.0,1.0,24.0

@@ -1,0 +1,26 @@
+
+message,expected_intent,has_code_block
+"What is Two Sum?",QUESTION_LOOKUP,false
+"LeetCode 121",QUESTION_LOOKUP,false
+"Tell me about Merge Intervals",QUESTION_LOOKUP,false
+"42",QUESTION_LOOKUP,false
+"Fix my code",CODE_FIX,false
+"My program gives the wrong output",CODE_FIX,false
+"Why is my C++ code failing?",CODE_FIX,false
+"```cpp int main() {} ```",CODE_FIX,true
+"Give me a hint for this problem",HINT_REQUEST,false
+"I'm stuck. Where should I start?",HINT_REQUEST,false
+"Can you guide me towards an approach?",HINT_REQUEST,false
+"Don't give me the answer, just a nudge",HINT_REQUEST,false
+"Explain the sliding window technique",CONCEPT_QUESTION,false
+"When should I use BFS?",CONCEPT_QUESTION,false
+"What is dynamic programming?",CONCEPT_QUESTION,false
+"Explain time complexity of binary search",CONCEPT_QUESTION,false
+"Hello Sahiii",GENERAL_CHAT,false
+"Thank you for helping me",GENERAL_CHAT,false
+"Can you explain that again?",GENERAL_CHAT,false
+"Okay, I understand now",GENERAL_CHAT,false
+"Show me the complete solution",SOLUTION_REQUEST,false
+"I give up, give me the answer",SOLUTION_REQUEST,false
+"Give me the full C++ code",SOLUTION_REQUEST,false
+"Reveal the final solution",SOLUTION_REQUEST,false

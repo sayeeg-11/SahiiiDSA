@@ -1,0 +1,7 @@
+
+problem_id,problem_title,difficulty,description,user_message
+1,Two Sum,Easy,"Given an array of integers nums and an integer target, return indices of two numbers that add up to target. Each input has exactly one solution.","I am confused about how to approach this problem. Give me a hint."
+2,Longest Substring Without Repeating Characters,Medium,"Given a string s, find the length of the longest substring without repeating characters.","I need help identifying the right approach."
+3,House Robber,Medium,"Given an integer array representing money in houses, find the maximum amount that can be robbed without robbing two adjacent houses.","I cannot figure out the recurrence. Give me a hint."
+4,Number of Islands,Medium,"Given a 2D grid of land and water, count the number of islands. Islands are connected horizontally or vertically.","I am struggling with the traversal logic."
+5,Merge K Sorted Lists,Hard,"Given an array of k sorted linked lists, merge them into one sorted linked list and return its head.","I need guidance on an efficient solution."
